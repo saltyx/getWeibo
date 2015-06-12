@@ -24,5 +24,6 @@
 	<classpathentry kind="lib" path="F:/l例程/htmlunit-2.17/lib/xalan-2.7.2.jar"/>
 	<classpathentry kind="lib" path="F:/l例程/htmlunit-2.17/lib/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="F:/l例程/htmlunit-2.17/lib/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="F:/sqljdbc_4.0/chs/sqljdbc4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

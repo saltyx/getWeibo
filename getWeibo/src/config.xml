@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<struct>
+	<text name="sqlInfo">jdbc:sqlserver://localhost:1433;databasename=Weibo;</text>
+	<text name="username">sa</text>
+	<text name="password">12345678</text>
+</struct>

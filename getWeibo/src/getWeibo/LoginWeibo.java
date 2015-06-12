@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
+import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
@@ -55,6 +56,7 @@ public class LoginWeibo {
 	    HtmlPage page_logined = button_ok.click();
 	    Thread.sleep(time);
 //	    page_login = page_logined;
+	    System.out.println("登录成功");
 	    return page_logined;
 	}
 	public void PostWeiBo(String contents)
@@ -93,9 +95,8 @@ public class LoginWeibo {
 		}
 		
 	}
-	public ArrayList GetInfo_follow() throws IOException, InterruptedException
+	public ArrayList<String> GetInfo_follow() throws IOException, InterruptedException
 	{
-		List lists = new List();
 		HtmlAnchor button_me = (HtmlAnchor) loginPage().getByXPath("//a[@data-action=\"profile\"]").get(0);
 		HtmlPage page_me = button_me.click();
 		Thread.sleep(2000);
@@ -109,6 +110,7 @@ public class LoginWeibo {
 //		HtmlPage page_more = button_more.click();
 //		wc.waitForBackgroundJavaScript(2000);
 //		System.out.println(page_more.asText());
+		@SuppressWarnings("unchecked")
 		ArrayList<HtmlDivision> div_follow = (ArrayList<HtmlDivision>) page_follow.getByXPath("//div[@class=\"item-main txt-m mct-a txt-cut\"]");
 		
 		ArrayList<String> array = new ArrayList<String>();
@@ -117,5 +119,48 @@ public class LoginWeibo {
 			array.add(div.asText());
 		}
 		return array;
+		
 	}
+	public ArrayList<INFO> getMainPageInfo() throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException{
+		
+		ArrayList<INFO> array = new ArrayList<INFO>();
+		HtmlPage page_main_init = loginPage();
+		//click the main page
+		HtmlAnchor button_mainpage = (HtmlAnchor) page_main_init.getByXPath("//a[@data-text=\"首页\"]").get(0);
+		HtmlPage page_main = button_mainpage.click();
+		//get the updated main page
+		Thread.sleep(1000);
+//		System.out.println(page_main.asXml());
+		@SuppressWarnings("unchecked")
+		ArrayList<HtmlDivision> list_div = (ArrayList<HtmlDivision>) page_main.getByXPath("//div[@class=\"card card9 line-around\"]");
+		//get the division
+		System.out.println(list_div.size());
+		int index = 0;
+		for(HtmlDivision div: list_div)
+		{
+			INFO info = new INFO();
+			//获取昵称
+			HtmlSpan span_text = (HtmlSpan) div.getByXPath("//a[@class=\"item-main txt-l mct-a txt-cut\"]/span").get(index);
+			HtmlSection sec = (HtmlSection) div.getByXPath("//section[@class=\"weibo-detail\"]").get(index);
+			HtmlSpan span_time = (HtmlSpan) div.getByXPath("//span[@class=\"time\"]").get(index);
+			HtmlSpan span_from = (HtmlSpan) div.getByXPath("//span[@class=\"from\"]").get(index++);
+			System.out.println(span_text.asText());
+			System.out.println(sec.asText());
+			String x = span_time.asText().substring(0, span_time.asText().length()-3);
+			System.out.println(span_time.asText().substring(0, span_time.asText().length()-3));
+			System.out.println(span_from.asText().substring(2, span_from.asText().length()));
+			System.out.println(TimeHelper.subTime(x));
+			
+			String user = span_text.asText();
+			String contents = sec.asText();
+			String posttime = TimeHelper.subTime(x);
+			String device = span_from.asText().substring(2, span_from.asText().length());
+			String SQL = "insert into mainPage_WeiboInfo(username,contents,posttime,device) values('"+ user+"','"+contents + "','"+posttime+"','"+device+"')";
+			SqlHelper sqlhelper = new SqlHelper();
+			sqlhelper.excuteSql(SQL);
+		}
+		return array;
+	}
+	
+	
 }
