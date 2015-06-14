@@ -3,6 +3,7 @@ package getWeibo;
 import java.awt.Point;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 
 import javax.naming.spi.DirStateFactory.Result;
 import javax.xml.parsers.ParserConfigurationException;
@@ -67,6 +68,10 @@ public class SqlHelper {
 			System.out.println("connection failed");
 		}
 	}
+	public Statement getst()
+	{
+		return st;
+	}
 	public void excuteSql(String sql)
 	{
 		try {
@@ -89,11 +94,37 @@ public class SqlHelper {
 		}
 		return rs;
 	}
+	public ArrayList<String> getu(String sql) throws SQLException
+	{
+		ArrayList<String> u = new ArrayList<String>();
+		ResultSet rs = st.executeQuery(sql);
+		while(rs.next())
+		{
+			u.add(rs.getString("username"));
+		}
+		
+		return u;
+	}
+	public ArrayList<String> getp(String sql) throws SQLException
+	{
+		ArrayList<String> p = new ArrayList<String>();
+		ResultSet rs = st.executeQuery(sql);
+		while(rs.next())
+		{
+			p.add(rs.getString("password"));
+		}
+		
+		return p;
+	}
 /*	public String getOneRec(String sql)
 	{
 		
 	}
 */
-
+	public void RemoveTheSameRec(String tablename) throws SQLException
+	{
+		String tmp = "delete from "+tablename+" where [index] not in (select max([index]) from "+tablename+" group by [username],[contents],[posttime],[device] )";       
+		st.execute(tmp);
+	}
 }
 
